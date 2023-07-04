@@ -25,11 +25,10 @@ const storage = multer.diskStorage({
     cb(null, "uploads");
   },
   filename: function (req, file, cb) {
-    let uploadFile = file.originalname.split(".");
-    let name = `${uploadFile[0]}-${Date.now()}.${
-      uploadFile[uploadFile.length - 1]
-    }`;
-    cb(null, name);
+    cb(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
   },
 });
 const upload = multer({ storage: storage });
