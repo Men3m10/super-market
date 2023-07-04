@@ -118,34 +118,26 @@ app.get("/admin/order-status", [isAdmin], changeStatusOfOrder);
 app.get("/admin/users", [isAdmin], getAllUsers);
 
 // HELPER
-app.post(
-  "/photos/upload",
-  upload.array("photos", 12),
-  function (req, res, next) {
-    // req.files is array of `photos` files
-
-    try {
-      let files = req.files;
-      if (!files.length) {
-        return res.status(400).json({
-          err: "Please upload an image",
-          msg: "Please upload an image",
-        });
-      }
-      let file = req.files[0];
-      if (
-        file.mimetype == "image/png" ||
-        file.mimetype == "image/jpg" ||
-        file.mimetype == "image/jpeg"
-      ) {
-        return res.json({ image: file.filename });
-      }
-    } catch (error) {
-      return res.send(error.message);
+app.post("/photos/upload", upload.single("photo"), function (req, res, next) {
+  try {
+    let file = req.file;
+    if (!file) {
+      return res.status(400).json({
+        err: "Please upload an image",
+        msg: "Please upload an image",
+      });
     }
-  },
-  uploadImgCloud
-);
+    if (
+      file.mimetype == "image/png" ||
+      file.mimetype == "image/jpg" ||
+      file.mimetype == "image/jpeg"
+    ) {
+      return res.json({ image: file.filename });
+    }
+  } catch (error) {
+    return res.send(error.message);
+  }
+});
 
 app.listen(process.env.PORT || 8081, () => {
   console.log(`Example app listening on port ${process.env.PORT}!`);
