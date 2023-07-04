@@ -6,7 +6,6 @@ const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
 var path = require("path");
 var cors = require("cors");
-const cloudinary = require("./uploadimgcloudinary");
 
 // To access public folder
 app.use(cors());
@@ -121,47 +120,36 @@ app.get("/admin/users", [isAdmin], getAllUsers);
 app.post(
   "/photos/upload",
   upload.single("image"),
-  async function (req, res, next) {
+  uploadImgCloud,
+  function (req, res, next) {
+    // req.file contains the uploaded file
+
     try {
-      if (!req.file) {
+      let file = req.file;
+      if (!file) {
         return res.status(400).json({
           err: "Please upload an image",
           msg: "Please upload an image",
         });
       }
-      const result = await cloudinary.uploader.upload(req.file.path);
-      req.body.image = result.url;
       if (
-        result &&
-        (result.format === "png" ||
-          result.format === "jpg" ||
-          result.format === "jpeg")
+        file.mimetype == "image/png" ||
+        file.mimetype == "image/jpg" ||
+        file.mimetype == "image/jpeg"
       ) {
-        return res.send({ image: result.url });
+        return res.json({ image: req.body.image });
+      } else {
+        // Handle unsupported file types
+        return res.status(400).json({
+          err: "Unsupported file type",
+          msg: "Please upload an image of type PNG, JPG, or JPEG",
+        });
       }
-      return res.status(400).json({
-        err: "Invalid file format",
-        msg: "Invalid file format",
-      });
     } catch (error) {
       return res.send(error.message);
     }
   }
 );
-
-// app.post(
-//   "/photos/upload",
-//   upload.single("photo"),
-//   async function (req, res, next) {
-//     try {
-//       const result = await cloudinary.uploader.upload(req.file.path);
-//       req.body.image = result.url;
-//       return res.json({ image: file.filename });
-//     } catch (error) {
-//       return res.send(error.message);
-//     }
-//   }
-// );
 app.listen(process.env.PORT || 8081, () => {
   console.log(`Example app listening on port ${process.env.PORT}!`);
 });
