@@ -116,7 +116,7 @@ app.get("/admin/order-status", [isAdmin], changeStatusOfOrder);
 app.get("/admin/users", [isAdmin], getAllUsers);
 
 // HELPER
-app.post("/photos/upload", upload.single("photo"), function (req, res, next) {
+app.post("/photos/upload", upload.single("image"), function (req, res, next) {
   // req.file contains the uploaded file
 
   try {
