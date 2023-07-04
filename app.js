@@ -21,7 +21,7 @@ dotenv.config();
 const multer = require("multer");
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "public/uploads/");
+    cb(null, "uploads");
   },
   filename: function (req, file, cb) {
     let uploadFile = file.originalname.split(".");
@@ -126,12 +126,10 @@ app.post(
     try {
       let files = req.files;
       if (!files.length) {
-        return res
-          .status(400)
-          .json({
-            err: "Please upload an image",
-            msg: "Please upload an image",
-          });
+        return res.status(400).json({
+          err: "Please upload an image",
+          msg: "Please upload an image",
+        });
       }
       let file = req.files[0];
       if (
