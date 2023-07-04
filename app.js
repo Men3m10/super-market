@@ -45,6 +45,7 @@ const {
   updateProduct,
   deleteProduct,
   getAllProducts,
+  uploadImgCloud
 } = require("./controllers/products/products");
 const {
   checkout,
@@ -116,11 +117,12 @@ app.get("/admin/order-status", [isAdmin], changeStatusOfOrder);
 app.get("/admin/users", [isAdmin], getAllUsers);
 
 // HELPER
-app.post("/photos/upload", upload.single("image"), function (req, res, next) {
+app.post("/photos/upload", upload.single("image"),uploadImgCloud, function (req, res, next) {
   // req.file contains the uploaded file
 
   try {
     let file = req.file;
+    res.send({ image:  req.body.image });
     if (!file) {
       return res.status(400).json({
         err: "Please upload an image",
