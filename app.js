@@ -120,7 +120,7 @@ app.get("/admin/users", [isAdmin], getAllUsers);
 // HELPER
 app.post(
   "/photos/upload",
-  upload.single("photo"),
+  upload.single("image"),
   async function (req, res, next) {
     try {
       if (!req.file) {
@@ -130,13 +130,14 @@ app.post(
         });
       }
       const result = await cloudinary.uploader.upload(req.file.path);
+      req.body.image = result.url;
       if (
         result &&
         (result.format === "png" ||
           result.format === "jpg" ||
           result.format === "jpeg")
       ) {
-        return res.json({ image: result.url });
+        return res.send({ image: result.url });
       }
       return res.status(400).json({
         err: "Invalid file format",
