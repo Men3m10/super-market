@@ -24,10 +24,11 @@ const storage = multer.diskStorage({
     cb(null, "uploads");
   },
   filename: function (req, file, cb) {
-    cb(
-      null,
-      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-    );
+    let uploadFile = file.originalname.split(".");
+    let name = `${uploadFile[0]}-${Date.now()}.${
+      uploadFile[uploadFile.length - 1]
+    }`;
+    cb(null, name);
   },
 });
 const upload = multer({ storage: storage });
@@ -45,7 +46,6 @@ const {
   updateProduct,
   deleteProduct,
   getAllProducts,
-  uploadImgCloud,
 } = require("./controllers/products/products");
 const {
   checkout,
@@ -119,37 +119,34 @@ app.get("/admin/users", [isAdmin], getAllUsers);
 // HELPER
 app.post(
   "/photos/upload",
-  upload.single("image"),
-  uploadImgCloud,
+  upload.array("photos", 12),
   function (req, res, next) {
-    // req.file contains the uploaded file
+    // req.files is array of `photos` files
 
     try {
-      let file = req.file;
-      if (!file) {
-        return res.status(400).json({
-          err: "Please upload an image",
-          msg: "Please upload an image",
-        });
+      let files = req.files;
+      if (!files.length) {
+        return res
+          .status(400)
+          .json({
+            err: "Please upload an image",
+            msg: "Please upload an image",
+          });
       }
+      let file = req.files[0];
       if (
         file.mimetype == "image/png" ||
         file.mimetype == "image/jpg" ||
         file.mimetype == "image/jpeg"
       ) {
-        return res.json({ image: result.url });
-      } else {
-        // Handle unsupported file types
-        return res.status(400).json({
-          err: "Unsupported file type",
-          msg: "Please upload an image of type PNG, JPG, or JPEG",
-        });
+        return res.json({ image: file.filename });
       }
     } catch (error) {
       return res.send(error.message);
     }
   }
 );
+
 app.listen(process.env.PORT || 8081, () => {
   console.log(`Example app listening on port ${process.env.PORT}!`);
 });
