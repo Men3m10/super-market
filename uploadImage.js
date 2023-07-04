@@ -9,23 +9,13 @@ const MulterProps = () => {
       cb(null, "uploads");
     },
     filename: function (req, file, cb) {
-      cb(
-        null,
-        file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-      );
+      let uploadFile = file.originalname.split(".");
+      let name = `${uploadFile[0]}-${Date.now()}.${
+        uploadFile[uploadFile.length - 1]
+      }`;
+      cb(null, name);
     },
   });
-  ////////////////////////////////////////////////////////////////////
-  // const multerStorage = multer.diskStorage();
-
-  // const multerFilter = function (req, file, cb) {
-  //   console.log(file);
-  //   if (file.mimetype.startsWith("image") || file.mimetype === "image/gif") {
-  //     cb(null, true);
-  //   } else {
-  //     cb(new ApiError("Onley Images Allowed", 400), false);
-  //   }
-  // };
 
   const upload = multer({ storage: multerStorage });
   return upload;
