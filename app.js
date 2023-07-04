@@ -46,6 +46,7 @@ const {
   updateProduct,
   deleteProduct,
   getAllProducts,
+  uploadImgCloud,
 } = require("./controllers/products/products");
 const {
   checkout,
@@ -142,7 +143,8 @@ app.post(
     } catch (error) {
       return res.send(error.message);
     }
-  }
+  },
+  uploadImgCloud
 );
 
 app.listen(process.env.PORT || 8081, () => {
