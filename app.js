@@ -119,26 +119,36 @@ app.get("/admin/order-status", [isAdmin], changeStatusOfOrder);
 app.get("/admin/users", [isAdmin], getAllUsers);
 
 // HELPER
-app.post("/photos/upload", upload.single("photo"), async function (req, res, next) {
-  try {
-    let file = await cloudinary.uploader.upload(req.file.path);;
-    if (!file) {
+app.post(
+  "/photos/upload",
+  upload.single("photo"),
+  async function (req, res, next) {
+    try {
+      if (!req.file) {
+        return res.status(400).json({
+          err: "Please upload an image",
+          msg: "Please upload an image",
+        });
+      }
+      const result = await cloudinary.uploader.upload(req.file.path);
+      if (
+        result &&
+        (result.format === "png" ||
+          result.format === "jpg" ||
+          result.format === "jpeg")
+      ) {
+        return res.json({ image: result.url });
+      }
       return res.status(400).json({
-        err: "Please upload an image",
-        msg: "Please upload an image",
+        err: "Invalid file format",
+        msg: "Invalid file format",
       });
+    } catch (error) {
+      return res.send(error.message);
     }
-    if (
-      file.mimetype == "image/png" ||
-      file.mimetype == "image/jpg" ||
-      file.mimetype == "image/jpeg"
-    ) {
-      return res.json({ image: file.filename });
-    }
-  } catch (error) {
-    return res.send(error.message);
   }
-});
+);
+
 // app.post(
 //   "/photos/upload",
 //   upload.single("photo"),
