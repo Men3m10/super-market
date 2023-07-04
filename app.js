@@ -137,7 +137,7 @@ app.post(
         file.mimetype == "image/jpg" ||
         file.mimetype == "image/jpeg"
       ) {
-        return res.json({ image: req.body.image });
+        return res.json({ image: result.url });
       } else {
         // Handle unsupported file types
         return res.status(400).json({
