@@ -19,19 +19,18 @@ dotenv.config();
 
 // MULTER
 const multer = require("multer");
-const storage = multer.diskStorage({
+const multerStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "uploads");
   },
   filename: function (req, file, cb) {
-    let uploadFile = file.originalname.split(".");
-    let name = `${uploadFile[0]}-${Date.now()}.${
-      uploadFile[uploadFile.length - 1]
-    }`;
-    cb(null, name);
+    cb(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
   },
 });
-const upload = multer({ storage: storage });
+const upload = multer({ storage: multerStorage });
 
 const {
   register,
@@ -117,35 +116,34 @@ app.get("/admin/order-status", [isAdmin], changeStatusOfOrder);
 app.get("/admin/users", [isAdmin], getAllUsers);
 
 // HELPER
-app.post(
-  "/photos/upload",
-  upload.array("photos", 12),
-  function (req, res, next) {
-    // req.files is array of `photos` files
+app.post("/photos/upload", upload.single("photo"), function (req, res, next) {
+  // req.file contains the uploaded file
 
-    try {
-      let files = req.files;
-      if (!files.length) {
-        return res
-          .status(400)
-          .json({
-            err: "Please upload an image",
-            msg: "Please upload an image",
-          });
-      }
-      let file = req.files[0];
-      if (
-        file.mimetype == "image/png" ||
-        file.mimetype == "image/jpg" ||
-        file.mimetype == "image/jpeg"
-      ) {
-        return res.json({ image: file.filename });
-      }
-    } catch (error) {
-      return res.send(error.message);
+  try {
+    let file = req.file;
+    if (!file) {
+      return res.status(400).json({
+        err: "Please upload an image",
+        msg: "Please upload an image",
+      });
     }
+    if (
+      file.mimetype == "image/png" ||
+      file.mimetype == "image/jpg" ||
+      file.mimetype == "image/jpeg"
+    ) {
+      return res.json({ image: file.filename });
+    } else {
+      // Handle unsupported file types
+      return res.status(400).json({
+        err: "Unsupported file type",
+        msg: "Please upload an image of type PNG, JPG, or JPEG",
+      });
+    }
+  } catch (error) {
+    return res.send(error.message);
   }
-);
+});
 
 app.listen(process.env.PORT || 8081, () => {
   console.log(`Example app listening on port ${process.env.PORT}!`);
