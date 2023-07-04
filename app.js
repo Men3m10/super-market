@@ -119,39 +119,39 @@ app.get("/admin/order-status", [isAdmin], changeStatusOfOrder);
 app.get("/admin/users", [isAdmin], getAllUsers);
 
 // HELPER
-// app.post("/photos/upload", upload.single("photo"), function (req, res, next) {
-//   try {
-//     let file = req.file;
-//     if (!file) {
-//       return res.status(400).json({
-//         err: "Please upload an image",
-//         msg: "Please upload an image",
-//       });
-//     }
-//     if (
-//       file.mimetype == "image/png" ||
-//       file.mimetype == "image/jpg" ||
-//       file.mimetype == "image/jpeg"
-//     ) {
-//       return res.json({ image: file.filename });
-//     }
-//   } catch (error) {
-//     return res.send(error.message);
-//   }
-// });
-app.post(
-  "/photos/upload",
-  upload.single("photo"),
-  async function (req, res, next) {
-    try {
-      const result = await cloudinary.uploader.upload(req.file.path);
-      req.body.image = result.url;
-      next();
-    } catch (error) {
-      return res.send(error.message);
+app.post("/photos/upload", upload.single("photo"), async function (req, res, next) {
+  try {
+    let file = await cloudinary.uploader.upload(req.file.path);;
+    if (!file) {
+      return res.status(400).json({
+        err: "Please upload an image",
+        msg: "Please upload an image",
+      });
     }
+    if (
+      file.mimetype == "image/png" ||
+      file.mimetype == "image/jpg" ||
+      file.mimetype == "image/jpeg"
+    ) {
+      return res.json({ image: file.filename });
+    }
+  } catch (error) {
+    return res.send(error.message);
   }
-);
+});
+// app.post(
+//   "/photos/upload",
+//   upload.single("photo"),
+//   async function (req, res, next) {
+//     try {
+//       const result = await cloudinary.uploader.upload(req.file.path);
+//       req.body.image = result.url;
+//       return res.json({ image: file.filename });
+//     } catch (error) {
+//       return res.send(error.message);
+//     }
+//   }
+// );
 app.listen(process.env.PORT || 8081, () => {
   console.log(`Example app listening on port ${process.env.PORT}!`);
 });
