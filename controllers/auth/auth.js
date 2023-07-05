@@ -130,19 +130,15 @@ module.exports.userById = async (req, res) => {
   }
 };
 
-
-
 module.exports.forgetPassword = async (req, res, next) => {
   try {
     const user = await userModel.findOne({ email: req.body.email });
     if (!user) {
       return next(
-        res
-          .status(404)
-          .json({
-            status: "failed",
-            message: "there is no user with this email",
-          })
+        res.status(404).json({
+          status: "failed",
+          message: "there is no user with this email",
+        })
       );
     }
     //2-if user exist , generate random 6 digits and save it in db and encrypt it to protect from hacking
@@ -196,20 +192,32 @@ module.exports.verifyResetCode = async (req, res, next) => {
     //2)  get user by reset number
     const user = await userModel.findOne({ passwordRestCode: hashedRestCode });
     if (!user) {
-      return next(res.status(404).send("Reset code invalid"));
+      return next(
+        res.status(404).json({
+          status: "failed",
+          message: "Reset code invalid",
+        })
+      );
     }
     //3) check reset code is  expired
     const checkExpired = await userModel.findOne({
       passwordRestExpires: { $gt: Date.now() },
     }); //لازم يكون وقت الانتهاء اكبر من الوقت اللي انا بدخله فيه
     if (!checkExpired) {
-      return next(res.status(401).send("Reset code expired"));
+      return next(
+        res.status(401).json({
+          status: "failed",
+          message: "Reset code expired",
+        })
+      );
     }
     //4)valid rest code
     user.passwordRestVerified = true;
     await user.save();
 
-    res.status(200).json({ message: "verified successfully" });
+    res
+      .status(200)
+      .json({ status: "success", message: "verified successfully" });
   } catch (error) {
     return res.send(error.message);
   }
