@@ -38,6 +38,8 @@ const {
   updateUser,
   deleteUser,
   userById,
+  forgetPassword,
+  verifyResetCode,
   resetPassword,
 } = require("./controllers/auth/auth");
 const {
@@ -45,7 +47,7 @@ const {
   updateProduct,
   deleteProduct,
   getAllProducts,
-  uploadImgCloud
+  uploadImgCloud,
 } = require("./controllers/products/products");
 const {
   checkout,
@@ -80,6 +82,9 @@ app.get("/", (req, res) => {
 // AUTH
 app.post("/register", register);
 app.post("/login", login);
+app.post("/forgetPassword", forgetPassword);
+app.post("/verify", verifyResetCode);
+app.put("/resetPassword", resetPassword);
 
 // User Routes
 app.post("/update-user", updateUser);
@@ -117,35 +122,40 @@ app.get("/admin/order-status", [isAdmin], changeStatusOfOrder);
 app.get("/admin/users", [isAdmin], getAllUsers);
 
 // HELPER
-app.post("/photos/upload", upload.single("image"),uploadImgCloud, function (req, res, next) {
-  // req.file contains the uploaded file
+app.post(
+  "/photos/upload",
+  upload.single("image"),
+  uploadImgCloud,
+  function (req, res, next) {
+    // req.file contains the uploaded file
 
-  try {
-    let file = req.file;
-    res.send({ image:  req.body.image });
-    if (!file) {
-      return res.status(400).json({
-        err: "Please upload an image",
-        msg: "Please upload an image",
-      });
+    try {
+      let file = req.file;
+      res.send({ image: req.body.image });
+      if (!file) {
+        return res.status(400).json({
+          err: "Please upload an image",
+          msg: "Please upload an image",
+        });
+      }
+      if (
+        file.mimetype == "image/png" ||
+        file.mimetype == "image/jpg" ||
+        file.mimetype == "image/jpeg"
+      ) {
+        return res.json({ image: file.filename });
+      } else {
+        // Handle unsupported file types
+        return res.status(400).json({
+          err: "Unsupported file type",
+          msg: "Please upload an image of type PNG, JPG, or JPEG",
+        });
+      }
+    } catch (error) {
+      return res.send(error.message);
     }
-    if (
-      file.mimetype == "image/png" ||
-      file.mimetype == "image/jpg" ||
-      file.mimetype == "image/jpeg"
-    ) {
-      return res.json({ image: file.filename });
-    } else {
-      // Handle unsupported file types
-      return res.status(400).json({
-        err: "Unsupported file type",
-        msg: "Please upload an image of type PNG, JPG, or JPEG",
-      });
-    }
-  } catch (error) {
-    return res.send(error.message);
   }
-});
+);
 
 app.listen(process.env.PORT || 8081, () => {
   console.log(`Example app listening on port ${process.env.PORT}!`);
