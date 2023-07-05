@@ -139,7 +139,10 @@ module.exports.forgetPassword = async (req, res, next) => {
       return next(
         res
           .status(404)
-          .send(`there is no user with this email ${req.body.email}`)
+          .json({
+            status: "failed",
+            message: "there is no user with this email",
+          })
       );
     }
     //2-if user exist , generate random 6 digits and save it in db and encrypt it to protect from hacking
