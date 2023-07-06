@@ -15,7 +15,7 @@ const { uploadSingleImage } = require("../../uploadImage");
 
 module.exports.addProduct = async (req, res) => {
   try {
-    const { title, sku, price, image } = req.body;
+    const { title, sku, price, image, imageId } = req.body;
 
     if (!title || !sku || !price) return res.send("Fields are empty");
 
@@ -27,6 +27,7 @@ module.exports.addProduct = async (req, res) => {
       message: "Product inserted successfully",
       data: product,
       image,
+      imageId,
     });
   } catch (error) {
     return res.send(error.message);
