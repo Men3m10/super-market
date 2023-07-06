@@ -5,7 +5,8 @@ const { uploadSingleImage } = require("../../uploadImage");
   (module.exports.uploadImgCloud = async (req, res, next) => {
     try {
       const result = await cloudinary.uploader.upload(req.file.path);
-      req.body.image = result.url;
+       req.body.image = result.url;
+      req.body.id = result.public_id;
       next();
     } catch (error) {
       return res.send(error.message);
