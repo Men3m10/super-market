@@ -89,21 +89,36 @@ module.exports.deleteProduct = async (req, res) => {
     const { id } = req.query;
 
     // check if product exist with the given product id
-    const product = await productModel.findOneAndDelete({ _id: id });
+    const product = await productModel.findById(id);
     if (!product) {
       return res.json({
         success: false,
-        message: "product does not exist",
+        message: "Product not found",
       });
     }
+
+    const productImgId = product.imageId;
+    console.log(`Deleting image ${productImgId} from Cloudinary.`);
+    // delete image from Cloudinary
+    const result = await cloudinary.uploader.destroy(productImgId);
+    if (result.result !== "ok") {
+      throw new Error(result.result);
+    }
+    await productModel.findByIdAndRemove(id);
     return res.json({
       success: true,
       message: "product deleted successfully",
     });
   } catch (error) {
-    return res.send(error.message);
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "An error occurred while deleting the product.",
+      error: error.message,
+    });
   }
 };
+
 
 module.exports.getAllProducts = async (req, res) => {
   try {
