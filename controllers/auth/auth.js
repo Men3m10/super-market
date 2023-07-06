@@ -230,12 +230,20 @@ module.exports.resetPassword = async (req, res, next) => {
     const { email } = req.body;
     let user = await userModel.findOne({ email });
     if (!user) {
-      return next(res.status(404).send("No user with this Email "));
+      return next(
+        res.status(404).json({
+          status: "failed",
+          message: "No user with this Email ",
+        })
+      );
     }
     //2)if verify is true
     if (!user.passwordRestVerified) {
       return next(
-        res.status(400).send("We send a Reset Code ,Please verify your email")
+        res.status(400).json({
+          status: "failed",
+          message: "We send a Reset Code ,Please verify your email ",
+        })
       );
     }
 
@@ -251,7 +259,13 @@ module.exports.resetPassword = async (req, res, next) => {
     user.token = token;
     await user.save();
 
-    res.status(200).json({ message: "new password set successfully", token });
+    res
+      .status(200)
+      .json({
+        status: "success",
+        message: "new password set successfully",
+        token,
+      });
   } catch (error) {
     return res.send(error.message);
   }
