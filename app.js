@@ -131,7 +131,7 @@ app.post(
 
     try {
       let file = req.file;
-      res.send({ image: req.body.image });
+         res.json({ image: req.body.image, id: req.body.id });
       if (!file) {
         return res.status(400).json({
           err: "Please upload an image",
