@@ -124,9 +124,9 @@ app.get("/admin/users", [isAdmin], getAllUsers);
 
 app.delete("/Delete-Img", async function (req, res, next) {
   try {
-    const { id } = req.query;
-    console.log(id.toString());
-    const result = await cloudinary.uploader.destroy(id.toString());
+    const { id } = req.body;
+
+    const result = await cloudinary.uploader.destroy(id);
     console.log(result);
     if (result.result !== "ok") {
       throw new Error(result.result);
