@@ -1,11 +1,12 @@
 const productModel = require("../../models/product");
 const cloudinary = require("../../uploadimgcloudinary");
 const { uploadSingleImage } = require("../../uploadImage");
+
 (module.exports.uploadProductImage = uploadSingleImage("image")),
   (module.exports.uploadImgCloud = async (req, res, next) => {
     try {
       const result = await cloudinary.uploader.upload(req.file.path);
-       req.body.image = result.url;
+      req.body.image = result.url;
       req.body.id = result.public_id;
       next();
     } catch (error) {
@@ -53,7 +54,6 @@ module.exports.getProducts = async (req, res) => {
 
 module.exports.updateProduct = async (req, res) => {
   try {
-    const { title, sku, price, image } = req.body;
     const { id } = req.query;
 
     // check if product exist with the given product id
@@ -80,7 +80,7 @@ module.exports.updateProduct = async (req, res) => {
       });
     }
   } catch (error) {
-    return res.send(error.message);
+    return res.json({ error: error });
   }
 };
 
@@ -118,7 +118,6 @@ module.exports.deleteProduct = async (req, res) => {
     });
   }
 };
-
 
 module.exports.getAllProducts = async (req, res) => {
   try {
