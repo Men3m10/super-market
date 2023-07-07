@@ -129,7 +129,7 @@ app.delete("/Delete-Img", async function (req, res, next) {
     const result = await cloudinary.uploader.destroy(id);
     console.log(result);
     if (result.result !== "ok") {
-      throw new Error(result.result);
+      return res.json({ message: "Can not access id" });
     }
     return res.json({
       success: true,
@@ -137,6 +137,7 @@ app.delete("/Delete-Img", async function (req, res, next) {
     });
   } catch (error) {
     return res.json({
+      success: false,
       error: error,
     });
   }
