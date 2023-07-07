@@ -6,6 +6,7 @@ const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
 var path = require("path");
 var cors = require("cors");
+const cloudinary = require("./uploadimgcloudinary");
 
 // To access public folder
 app.use(cors());
@@ -121,6 +122,23 @@ app.get("/admin/orders", [isAdmin], getAllOrders);
 app.get("/admin/order-status", [isAdmin], changeStatusOfOrder);
 app.get("/admin/users", [isAdmin], getAllUsers);
 
+app.delete("/Delete-Img", async function (req, res, next) {
+  try {
+    const { id } = req.query;
+    const result = await cloudinary.uploader.destroy(id.toString());
+    console.log(result);
+    if (result.result !== "ok") {
+      throw new Error(result.result);
+    }
+    return res.json({
+      success: true,
+      message: "img deleted successfully",
+    });
+  } catch (error) {
+    return res.send(error.message);
+  }
+});
+
 // HELPER
 app.post(
   "/photos/upload",
@@ -131,7 +149,7 @@ app.post(
 
     try {
       let file = req.file;
-         res.json({ image: req.body.image, id: req.body.id });
+      res.json({ image: req.body.image, id: req.body.id });
       if (!file) {
         return res.status(400).json({
           err: "Please upload an image",
