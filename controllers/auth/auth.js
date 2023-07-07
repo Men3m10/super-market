@@ -141,8 +141,8 @@ module.exports.forgetPassword = async (req, res, next) => {
         })
       );
     }
-    //2-if user exist , generate random 6 digits and save it in db and encrypt it to protect from hacking
-    const ResetCode = Math.floor(100000 + Math.random() * 900000).toString();
+    //2-if user exist , generate random 4 digits and save it in db and encrypt it to protect from hacking
+    const ResetCode = Math.floor(1000 + Math.random() * 9000).toString();
     const hashedRestCode = crypto
       .createHash("sha256")
       .update(ResetCode)
