@@ -137,7 +137,7 @@ app.delete("/Delete-Img", async function (req, res, next) {
     });
   } catch (error) {
     return res.json({
-      error,
+      error: error,
     });
   }
 });
