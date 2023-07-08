@@ -56,6 +56,15 @@ module.exports.register = async (req, res) => {
         message: "email or password is empty",
       });
     }
+
+    const Dubel = await userModel.findOne({ email });
+    if (Dubel) {
+      return res.json({
+        success: false,
+        message: "this email is used before",
+        data: email,
+      });
+    }
     req.body.password = await bcrypt.hash(password, 10);
 
     let user = new userModel(req.body);
@@ -64,10 +73,11 @@ module.exports.register = async (req, res) => {
     return res.json({
       success: true,
       message: "user registered successfully",
-      data: user,
     });
   } catch (error) {
-    return res.send(error.message);
+    return res.json({
+      error: error.message,
+    });
   }
 };
 
@@ -141,8 +151,8 @@ module.exports.forgetPassword = async (req, res, next) => {
         })
       );
     }
-    //2-if user exist , generate random 4 digits and save it in db and encrypt it to protect from hacking
-    const ResetCode = Math.floor(1000 + Math.random() * 9000).toString();
+    //2-if user exist , generate random 6 digits and save it in db and encrypt it to protect from hacking
+    const ResetCode = Math.floor(100000 + Math.random() * 900000).toString();
     const hashedRestCode = crypto
       .createHash("sha256")
       .update(ResetCode)
@@ -259,13 +269,11 @@ module.exports.resetPassword = async (req, res, next) => {
     user.token = token;
     await user.save();
 
-    res
-      .status(200)
-      .json({
-        status: "success",
-        message: "new password set successfully",
-        token,
-      });
+    res.status(200).json({
+      status: "success",
+      message: "new password set successfully",
+      token,
+    });
   } catch (error) {
     return res.send(error.message);
   }
