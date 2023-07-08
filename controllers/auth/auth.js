@@ -62,7 +62,6 @@ module.exports.register = async (req, res) => {
       return res.json({
         success: false,
         message: "this email is used before",
-        data: email,
       });
     }
     req.body.password = await bcrypt.hash(password, 10);
@@ -73,6 +72,7 @@ module.exports.register = async (req, res) => {
     return res.json({
       success: true,
       message: "user registered successfully",
+      data:user
     });
   } catch (error) {
     return res.json({
