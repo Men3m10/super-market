@@ -16,6 +16,7 @@ const userSchema = mongoose.Schema(
       required: [true, "email required"],
       unique: [true, "this email used before"],
       lowercase: [true, "email required"],
+      trim: true,
     },
     userType: String,
     password: String,
@@ -33,6 +34,8 @@ const userSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-
+// userSchema.methods.generateAuthToken = function () {
+//     this.token = jwt.sign({ userID: this._id, email: this.email }, TOKEN_KEY, { expiresIn: '10h' })
+// }
 
 module.exports = mongoose.model("user", userSchema);
