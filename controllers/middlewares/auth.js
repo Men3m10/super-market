@@ -1,75 +1,85 @@
-const jwt = require("jsonwebtoken")
-const TOKEN_KEY = process.env.TOKEN_KEY
-const userModel = require("../../models/user")
-
+const jwt = require("jsonwebtoken");
+const TOKEN_KEY = process.env.TOKEN_KEY;
+const userModel = require("../../models/user");
 
 module.exports.isAdmin = async (req, res, next) => {
+  const { email } = req.body;
+  // receiving token from the header
+  let token = req.headers["x-auth-token"] || req.body.token || req.query.token;
 
-    const {email} = req.body;
-    // receiving token from the header
-    let token = req.headers["x-auth-token"] || req.body.token || req.query.token;
+  if (token) {
+    try {
+      // decode token with TOKEN key to extract the user
+      const decoded = jwt.verify(token, TOKEN_KEY);
 
-    if(token){
-        try{
-            // decode token with TOKEN key to extract the user
-            const decoded = jwt.verify(token,TOKEN_KEY)
+      // saving the current user in req.user
+      req.user = decoded;
 
-            // saving the current user in req.user
-            req.user = decoded
+      // checking if the logged in user is ADMIN or not
+      const user = await userModel
+        .findOne({ _id: decoded?._id, userType: "ADMIN" })
+        .select("-password");
 
-            // checking if the logged in user is ADMIN or not
-            const user = await userModel.findOne({_id : decoded?._id, userType : "ADMIN"})
-                .select("-password")
+      if (!user) {
+        // if not admin
+        return res.send("Insufficient User Permissions");
+      }
 
-            if(!user){
-                // if not admin
-                return res.send("Insufficient User Permissions")
-            }
-
-            // if admin, pass to the next function call
-            return next()
-
-        }catch(error){
-            return res.status(401).json({ msg: "Invalid User Auth Token", err: error.message });     
-        }
-
+      // if admin, pass to the next function call
+      return next();
+    } catch (error) {
+      return res
+        .status(401)
+        .json({ msg: "Invalid User Auth Token", err: error.message });
     }
-    else{
-        return res.status(400).json({ msg: "No Auth Token Found", err: "No Auth Token Found" });
-    }
-}
-
+  } else {
+    return res
+      .status(400)
+      .json({ msg: "No Auth Token Found", err: "No Auth Token Found" });
+  }
+};
 
 module.exports.checkAuth = async (req, res, next) => {
-    try{
+  try {
+    let token =
+      req.headers["x-auth-token"] || req.body.token || req.query.token;
 
-        let token = req.headers["x-auth-token"] || req.body.token || req.query.token;
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, TOKEN_KEY);
+        req.user = decoded;
 
-        if(token){
-            try{
+        const user = await userModel
+          .findOne({ _id: decoded?._id })
+          .select("-password");
 
-                const decoded = jwt.verify(token,TOKEN_KEY)
-                req.user = decoded
-
-                const user = await userModel.findOne({_id : decoded?._id})
-                    .select("-password")
-
-                if(!user){
-                    return res.send("Authentication failed")
-                }
-                return next()
-
-            }catch(error){
-                
-                return res.status(401).json({ msg: "Invalid User Auth Token", err: error.message });     
-            }
-        
-        }
-        else{
-            return res.status(400).json({ msg: "No Auth Token Found", err: "No Auth Token Found" });
+        if (!user) {
+          return res.send("Authentication failed");
         }
 
-    }catch(error){
-
+        if (user.passwordChangedAt) {
+          const passwordChangedAtTotimeStamp = parseInt(
+            user.passwordChangedAt.getTime() / 1000, //===> milleSecond to Second
+            10
+          );
+          if (passwordChangedAtTotimeStamp > decoded.iat) {
+            return res
+              .status(401)
+              .json({
+                msg: "user recently changed his password , please login again.",
+              });
+          }
+        }
+        return next();
+      } catch (error) {
+        return res
+          .status(401)
+          .json({ msg: "Invalid User Auth Token", err: error.message });
+      }
+    } else {
+      return res
+        .status(400)
+        .json({ msg: "please login first", err: "please login first" });
     }
-}
+  } catch (error) {}
+};
