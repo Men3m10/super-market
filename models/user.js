@@ -30,6 +30,7 @@ const userSchema = mongoose.Schema(
     passwordRestCode: String,
     passwordRestExpires: Date,
     passwordRestVerified: Boolean,
+    passwordChangedAt: Date,
   },
   { timestamps: true }
 );
