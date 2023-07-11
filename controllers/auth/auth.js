@@ -90,7 +90,7 @@ module.exports.changePassword = async (req, res, next) => {
     if (!findUser || !(await bcrypt.compare(password, findUser.password))) {
       return res.status(401).json({
         success: false,
-        message: "email or password is incorrect",
+        message: "password is incorrect",
       });
     }
     if (!password || !newPassword) {
