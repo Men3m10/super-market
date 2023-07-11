@@ -110,7 +110,7 @@ module.exports.changePassword = async (req, res, next) => {
     findUser.token = token;
     findUser.save();
 
-    res.status(200).json({ data: findUser, token });
+    res.status(200).json({ success: true, data: findUser, token });
   } catch (error) {
     return res.status(404).json({
       success: false,
