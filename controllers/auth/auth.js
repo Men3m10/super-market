@@ -72,10 +72,48 @@ module.exports.register = async (req, res) => {
     return res.json({
       success: true,
       message: "user registered successfully",
-      data:user
+      data: user,
     });
   } catch (error) {
     return res.json({
+      error: error.message,
+    });
+  }
+};
+
+module.exports.changePassword = async (req, res, next) => {
+  try {
+    //1)update logged user passwored based on payload(user._id) from protect route
+    const { id } = req.query;
+    const { password, newPassword } = req.body;
+    const findUser = await userModel.findOne({ _id: id });
+    if (!findUser || !(await bcrypt.compare(password, findUser.password))) {
+      return res.status(401).json({
+        success: false,
+        message: "email or password is incorrect",
+      });
+    }
+    if (!password || !newPassword) {
+      return res.status(401).json({
+        success: false,
+        message: "should enter password and new password ",
+      });
+    }
+
+    findUser.password = await bcrypt.hash(newPassword, 10);
+    findUser.passwordChangedAt = Date.now();
+
+    await findUser.save();
+
+    //2) generate token
+    const token = generateAuthToken({ _id: findUser?._id });
+    findUser.token = token;
+    findUser.save();
+
+    res.status(200).json({ data: findUser, token });
+  } catch (error) {
+    return res.status(404).json({
+      success: false,
       error: error.message,
     });
   }
