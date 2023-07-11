@@ -42,6 +42,7 @@ const {
   forgetPassword,
   verifyResetCode,
   resetPassword,
+  changePassword,
 } = require("./controllers/auth/auth");
 const {
   addProduct,
@@ -86,12 +87,12 @@ app.post("/login", login);
 app.post("/forgetPassword", forgetPassword);
 app.post("/verify", verifyResetCode);
 app.put("/resetPassword", resetPassword);
+app.post("/change-password", changePassword);
 
 // User Routes
 app.post("/update-user", updateUser);
 app.get("/user", userById);
 app.get("/delete-user", deleteUser);
-app.post("/reset-password", resetPassword);
 
 // Products
 app.post("/product", [isAdmin], addProduct);
