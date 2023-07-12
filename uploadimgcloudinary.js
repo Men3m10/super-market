@@ -1,9 +1,9 @@
 var cloudinary = require("cloudinary").v2;
 
 cloudinary.config({
-  cloud_name: "dj3uyodvz",
-  api_key: "955235792318767",
-  api_secret: "Eertp4kTJO_6SP4Nlb67QRD69EM",
+  cloud_name: "dskoxsteo",
+  api_key: "821363899943575",
+  api_secret: "2u2jnMBF3t3G5ciEyIEys8NNZN0",
 });
 
 const opts = {
