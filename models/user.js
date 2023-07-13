@@ -20,6 +20,7 @@ const userSchema = mongoose.Schema(
     },
     userType: String,
     password: String,
+    phone: String,
     token: String,
     wishlist: [
       {
