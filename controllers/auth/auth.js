@@ -47,7 +47,7 @@ module.exports.login = async (req, res) => {
 
 module.exports.register = async (req, res) => {
   try {
-    const { email, password, name, userType } = req.body;
+    const { email, password, name, userType ,phone} = req.body;
 
     // if any one of the field from email and password is not filled
     if (!email || !password) {
