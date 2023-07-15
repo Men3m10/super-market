@@ -57,11 +57,11 @@ module.exports.register = async (req, res) => {
       });
     }
 
-    const Dubel = await userModel.findOne({ email });
+    const Dubel = await userModel.findOne({ $or: [{ email }, { phone }] });
     if (Dubel) {
       return res.json({
         success: false,
-        message: "this email is used before",
+        message: "this email or phone is used before",
       });
     }
     req.body.password = await bcrypt.hash(password, 10);
