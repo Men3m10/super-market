@@ -204,7 +204,7 @@ module.exports.forgetPassword = async (req, res, next) => {
 
     await user.save();
     //3-send the reset code via email
-    const message = `Hi ${user.name} ,\n We received a request to reset the password on your Hells Kitchen. \n${ResetCode} \n Enter this code to complete the reset \n thanks for helping us keep your account secure \n the Hells Kitchen team`;
+    const message = `أهلاً ${user.name} ,\n تلقينا طلبًا لإعادة تعيين كلمة المرور على Hells Kitchen. \n${ResetCode} \n أدخل هذا الرمز لإكمال إعادة التعيين \n شكرا لمساعدتنا في الحفاظ على آمنة حسابك \n the Hells Kitchen team`;
 
     try {
       await sendEmail({
