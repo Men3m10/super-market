@@ -25,7 +25,7 @@ module.exports.addProduct = async (req, res) => {
 
     return res.json({
       success: true,
-      message: "Product inserted successfully",
+      message: "تم اضافه المنتج بنجاح",
       data: product,
       image,
       imageId,
@@ -43,7 +43,7 @@ module.exports.getProducts = async (req, res) => {
     return res.json({
       success: true,
       status: 400,
-      message: "list of all products",
+      message: "قائمة بجميع المنتجات",
       products,
       count: productsCount,
     });
@@ -69,14 +69,14 @@ module.exports.updateProduct = async (req, res) => {
       return res.json({
         success: true,
         status: 200,
-        message: "product updated successfully",
+        message: "تم تحديث المنتج بنجاح",
         data: updatedProduct,
       });
     } else {
       return res.json({
         success: false,
         status: 400,
-        message: "product does not exist",
+        message: "المنتج غير موجود",
       });
     }
   } catch (error) {
@@ -93,7 +93,7 @@ module.exports.deleteProduct = async (req, res) => {
     if (!product) {
       return res.json({
         success: false,
-        message: "Product not found",
+        message: "المنتج غير موجود",
       });
     }
 
@@ -107,13 +107,13 @@ module.exports.deleteProduct = async (req, res) => {
     await productModel.findByIdAndRemove(id);
     return res.json({
       success: true,
-      message: "product deleted successfully",
+      message: "تم حذف المنتج بنجاح",
     });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
       success: false,
-      message: "An error occurred while deleting the product.",
+      message: "حدث خطأ أثناء حذف المنتج.",
       error: error.message,
     });
   }
@@ -132,7 +132,7 @@ module.exports.getAllProducts = async (req, res) => {
     return res.json({
       success: true,
       status: 200,
-      message: "list of products",
+      message: "قائمة المنتجات",
       data: products,
     });
   } catch (error) {
