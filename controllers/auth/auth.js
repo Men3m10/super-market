@@ -18,7 +18,7 @@ module.exports.login = async (req, res) => {
       return res.json({
         success: true,
         status: 400,
-        message: "user does not exist with this email and password",
+        message: "المستخدم غير موجود ",
       });
     }
 
@@ -31,14 +31,14 @@ module.exports.login = async (req, res) => {
       return res.json({
         success: true,
         status: 200,
-        message: "user Logged in",
+        message: "تم تسجيل الدخول",
         data: user,
       });
     }
     return res.json({
       success: false,
       status: 400,
-      message: "email or password is incorrect",
+      message: "كلمه المرور او البريد غير صحيح",
     });
   } catch (error) {
     return res.send(error.message);
@@ -53,7 +53,7 @@ module.exports.register = async (req, res) => {
     if (!email || !password) {
       return res.json({
         success: false,
-        message: "email or password is empty",
+        message: "البريد الإلكتروني أو كلمة المرور فارغة",
       });
     }
 
@@ -61,7 +61,7 @@ module.exports.register = async (req, res) => {
     if (Dubel) {
       return res.json({
         success: false,
-        message: "this email or phone is used before",
+        message: "تم استخدام هذا البريد الإلكتروني أو هذا الهاتف من قبل ",
       });
     }
     req.body.password = await bcrypt.hash(password, 10);
@@ -71,7 +71,7 @@ module.exports.register = async (req, res) => {
 
     return res.json({
       success: true,
-      message: "user registered successfully",
+      message: "تم التسجيل بنجاح",
       data: user,
     });
   } catch (error) {
@@ -90,13 +90,13 @@ module.exports.changePassword = async (req, res, next) => {
     if (!findUser || !(await bcrypt.compare(password, findUser.password))) {
       return res.status(401).json({
         success: false,
-        message: " current password is incorrect",
+        message: " كلمة المرور الحالية غير صحيحة",
       });
     }
     if (!password || !newPassword) {
       return res.status(401).json({
         success: false,
-        message: "should enter password and new password ",
+        message: "يجب إدخال كلمة المرور وكلمة المرور الجديدة ",
       });
     }
 
@@ -125,7 +125,8 @@ module.exports.updateUser = async (req, res) => {
     const { id } = req.query;
     const user = await userModel.findOne({ _id: id });
 
-    if (!user) return res.send("user does not exist");
+    if (!user) return res.json({success: false,message: "المستخدم غير موجود"});
+
 
     let updatedUser = await userModel.findOneAndUpdate(
       { _id: id },
@@ -135,7 +136,7 @@ module.exports.updateUser = async (req, res) => {
 
     return res.json({
       success: true,
-      message: "user updated successfully",
+      message: "تم تحديث المستخدم بنجاح",
       data: updatedUser,
     });
   } catch (error) {
@@ -148,13 +149,13 @@ module.exports.deleteUser = async (req, res) => {
     const { id } = req.query;
 
     const user = await userModel.findOne({ _id: id });
-    if (!user) return res.status(200).send("user does not exist");
+    if (!user) return res.status(400).json({success: false,message: "المستخدم غير موجود"});
 
     await userModel.findOneAndDelete({ _id: id });
 
     return res.json({
       success: true,
-      message: "user deleted successfully",
+      message: "تم حذف المستخدم بنجاح",
     });
   } catch (error) {
     return res.status(400).send(error.message);
@@ -166,11 +167,11 @@ module.exports.userById = async (req, res) => {
     const { id } = req.query;
 
     const user = await userModel.findOne({ _id: id });
-    if (!user) return res.send("user does not exist");
+    if (!user) return res.status(400).json({success: false,message: "المستخدم غير موجود"});
 
     return res.json({
       success: true,
-      message: "user deleted successfully",
+      message: "تم حذف المستخدم بنجاح",
       data: user,
     });
   } catch (error) {
@@ -185,7 +186,7 @@ module.exports.forgetPassword = async (req, res, next) => {
       return next(
         res.status(404).json({
           status: "failed",
-          message: "there is no user with this email",
+          message: "لا يوجد مستخدم بهذا البريد الإلكتروني",
         })
       );
     }
@@ -210,7 +211,7 @@ module.exports.forgetPassword = async (req, res, next) => {
     try {
       await sendEmail({
         email: user.email,
-        subject: "Your Password Rest Code (Valid For 10 Min) ",
+        subject: "رمز إعادة تعيين كلمة المرور الخاصة بك (صالح لمدة 10 دقائق)",
         message,
       });
     } catch (error) {
@@ -219,13 +220,13 @@ module.exports.forgetPassword = async (req, res, next) => {
       user.passwordRestVerified = undefined;
       await user.save();
       return next(
-        res.status(500).send("there is an error in sending to email")
+        res.status(500).json({ status: "failed", message: "هناك خطأ في الإرسال إلى البريد الإلكتروني" })
       );
     }
 
     res
       .status(200)
-      .json({ status: "success", message: "reset code sent to email" });
+      .json({ status: "success", message: "تم ارسال otp" });
   } catch (error) {
     return res.send(error.message);
   }
@@ -245,7 +246,7 @@ module.exports.verifyResetCode = async (req, res, next) => {
       return next(
         res.status(404).json({
           status: "failed",
-          message: "Reset code invalid",
+          message: "رمز اعاده التعيين غير صحيح",
         })
       );
     }
@@ -257,7 +258,7 @@ module.exports.verifyResetCode = async (req, res, next) => {
       return next(
         res.status(401).json({
           status: "failed",
-          message: "Reset code expired",
+          message: "انتهت صلاحية رمز إعادة التعيين",
         })
       );
     }
@@ -267,7 +268,7 @@ module.exports.verifyResetCode = async (req, res, next) => {
 
     res
       .status(200)
-      .json({ status: "success", message: "verified successfully" });
+      .json({ status: "success", message: "تم التحقق بنجاح" });
   } catch (error) {
     return res.send(error.message);
   }
@@ -283,7 +284,7 @@ module.exports.resetPassword = async (req, res, next) => {
       return next(
         res.status(404).json({
           status: "failed",
-          message: "No user with this Email ",
+          message: "لا يوجد مستخدم بهذا البريد الإلكتروني",
         })
       );
     }
@@ -292,7 +293,7 @@ module.exports.resetPassword = async (req, res, next) => {
       return next(
         res.status(400).json({
           status: "failed",
-          message: "We send a Reset Code ,Please verify your email ",
+          message: "نرسل رمز إعادة التعيين ، يرجى التحقق من بريدك الإلكتروني ",
         })
       );
     }
@@ -311,7 +312,7 @@ module.exports.resetPassword = async (req, res, next) => {
 
     res.status(200).json({
       status: "success",
-      message: "new password set successfully",
+      message: "تم تعيين كلمة المرور الجديدة بنجاح",
       token,
     });
   } catch (error) {
