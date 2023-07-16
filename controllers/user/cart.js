@@ -34,14 +34,14 @@ module.exports.checkout = async (req, res) => {
             });
             return res.json({
                 success: true,
-                message : "successful checkout",
+                message : "الدفع بنجاح",
                 data : checkout
             })
         }
         else{
             return res.json({
                 success: false,
-                message : "pass correct parameters"
+                message : "مرر معطيات صحيحه"
             })
         }
 
@@ -60,7 +60,7 @@ module.exports.addToCart = async (req, res) => {
 
         return res.json({
             success : true,
-            message : "product pushed in cart successfully",
+            message : "تم اضافه المنتج في عربة التسوق بنجاح",
             data : addToCart
         })
 
@@ -79,7 +79,7 @@ module.exports.removeFromCart = async (req, res) => {
 
         return res.json({
             success : true,
-            message : "product removed from cart successfully",
+            message : "تمت إزالة المنتج من سلة التسوق بنجاح",
             data : removeFromCart
         })
 
