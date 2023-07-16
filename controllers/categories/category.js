@@ -12,7 +12,7 @@ module.exports.addCategory = async (req, res) => {
 
         return res.json({
             success : true,
-            message : "category inserted successfully",
+            message : "تم اضافه الفئة بنجاح",
             data : category
         })
 
@@ -30,7 +30,7 @@ module.exports.getCategories = async (req, res) => {
         return res.json({
             success : true,
             status : 400,
-            message : "list of all categories",
+            message : "قائمة بجميع الفئات",
             categories,
             count : categoriesCount
         })
@@ -56,7 +56,7 @@ module.exports.updateCategory = async (req, res) => {
             return res.json({
                 success : true,
                 status : 200,  
-                message : "category updated successfully",
+                message : "تم تحديث الفئة بنجاح",
                 data : updatedCategory
             })
         }else{
@@ -64,7 +64,7 @@ module.exports.updateCategory = async (req, res) => {
             return res.json({
                 success : false,
                 status : 400,
-                message : "category does not exist"
+                message : "الفئة غير موجودة"
             })
 
         }
@@ -84,12 +84,12 @@ module.exports.deleteCategory = async (req, res) => {
         if(!category){
             return res.json({
                 success : false,
-                message : "category does not exist",
+                message : "الفئة غير موجودة",
             })
         }
         return res.json({
             success : true,
-            message : "category deleted successfully",
+            message : "تم حذف الفئة بنجاح",
         })
 
     }catch(error){
@@ -97,28 +97,4 @@ module.exports.deleteCategory = async (req, res) => {
     } 
 }
 
-// module.exports.getAllProducts = async (req, res) => {
-//     try{
-
-//         // Search through title names
-//         var {search} = req.query
-//         if(!search) search = ""
-
-//         const products = await categoryModel.find({title:{'$regex' : search, '$options' : 'i'}})
-
-//         return res.json({
-//             success : true,
-//             status : 200,
-//             message : "list of products",
-//             data : products
-//         })
-
-//     }catch(error){
-//         return res.json({
-//             success : false,
-//             status : 400,
-//             message : error.message
-//         })
-//     }
-// }
 
