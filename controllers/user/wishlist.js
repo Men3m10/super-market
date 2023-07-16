@@ -14,7 +14,7 @@ module.exports.addToWishlist = async (req, res) => {
 
     return res.json({
       success: true,
-      message: "product pushed in wishlist successfully",
+      message: "تم اضافه المنتج في المفضلات بنجاح",
       data: addToWishlist,
     });
   } catch (error) {
@@ -35,7 +35,7 @@ module.exports.removeFromWishlist = async (req, res) => {
 
     return res.json({
       success: true,
-      message: "product removed from wishlist successfully",
+      message: "تمت إزالة المنتج من المفضلات بنجاح",
       data: removeFromWishlist,
     });
   } catch (error) {
@@ -55,7 +55,7 @@ module.exports.wishlist = async (req, res) => {
     if (!wishlist) {
       return res.json({
         success: false,
-        message: " add some products to yourWishlist",
+        message: "أضف بعض المنتجات إلى قائمة مفضلاتك",
       });
     }
 
