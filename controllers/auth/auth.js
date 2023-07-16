@@ -191,6 +191,7 @@ module.exports.forgetPassword = async (req, res, next) => {
     }
     //2-if user exist , generate random 4 digits and save it in db and encrypt it to protect from hacking
     const ResetCode = Math.floor(1000 + Math.random() * 9000).toString();
+    const ResetCode2 = ResetCode[3] + ResetCode[2] + ResetCode[1] + ResetCode[0];
     const hashedRestCode = crypto
       .createHash("sha256")
       .update(ResetCode)
@@ -204,7 +205,7 @@ module.exports.forgetPassword = async (req, res, next) => {
 
     await user.save();
     //3-send the reset code via email
-    const message = `أهلاً ${user.name} ,\n تلقينا طلبًا لإعادة تعيين كلمة المرور على Hells Kitchen. \n${ResetCode} \n أدخل هذا الرمز لإكمال إعادة التعيين \n شكرا لمساعدتنا في الحفاظ على آمنة حسابك \n the Hells Kitchen team`;
+    const message = `أهلاً ${user.name} ,\n تلقينا طلبًا لإعادة تعيين كلمة المرور على Hells Kitchen. \n${ResetCode2} \n أدخل هذا الرمز لإكمال إعادة التعيين \n شكرا لمساعدتنا في الحفاظ على آمنة حسابك \n the Hells Kitchen team`;
 
     try {
       await sendEmail({
@@ -229,6 +230,7 @@ module.exports.forgetPassword = async (req, res, next) => {
     return res.send(error.message);
   }
 };
+
 
 module.exports.verifyResetCode = async (req, res, next) => {
   try {
