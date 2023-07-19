@@ -1,12 +1,12 @@
-const ordersModel = require("../../models/order");
+const carordersModel = require("../../models/carorder");
 
 module.exports.getAllCarOrders = async (req, res) => {
   try {
-    const orders = await ordersModel
+    const orders = await carordersModel
       .find()
       .populate({ path: "user", select: "-password -token" });
 
-    const ordersCount = await ordersModel.find().count();
+    const ordersCount = await carordersModel.find().count();
 
     return res.json({
       success: true,
