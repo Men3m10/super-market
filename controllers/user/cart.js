@@ -35,13 +35,13 @@ module.exports.checkout = async (req, res) => {
       });
       return res.json({
         success: true,
-        message: "successful checkout",
+        message: "تم الطلب بنجاح",
         data: checkout,
       });
     } else {
       return res.json({
         success: false,
-        message: "pass correct parameters",
+        message: "ادخل معطيات صحيحه",
       });
     }
   } catch (error) {
@@ -62,7 +62,7 @@ module.exports.carCheckout = async (req, res) => {
     checkout.save();
     return res.json({
       success: true,
-      message: "successful orderd",
+      message: "تم طلب السياره بنجاح",
       data: checkout,
     });
   } catch (error) {
@@ -83,7 +83,7 @@ module.exports.addToCart = async (req, res) => {
 
     return res.json({
       success: true,
-      message: "product pushed in cart successfully",
+      message: "تمت الاضافه الي السله بنجاح",
       data: addToCart,
     });
   } catch (error) {
@@ -104,7 +104,7 @@ module.exports.removeFromCart = async (req, res) => {
 
     return res.json({
       success: true,
-      message: "product removed from cart successfully",
+      message: "تم المسح من السله بنجاح",
       data: removeFromCart,
     });
   } catch (error) {
