@@ -56,6 +56,7 @@ const {
   addToCart,
   cart,
   removeFromCart,
+  carCheckout,
 } = require("./controllers/user/cart");
 const { isAdmin, checkAuth } = require("./controllers/middlewares/auth");
 const { dashboardData, getAllUsers } = require("./controllers/admin/dashboard");
@@ -63,7 +64,9 @@ const {
   getAllOrders,
   changeStatusOfOrder,
 } = require("./controllers/admin/orders");
+const { getAllCarOrders } = require("./controllers/admin/carorder");
 const { orders } = require("./controllers/user/orders");
+const { carorders } = require("./controllers/user/carorder");
 const {
   addCategory,
   getCategories,
@@ -108,9 +111,11 @@ app.get("/delete-category", [isAdmin], deleteCategory);
 
 // ORDERS
 app.get("/orders", [checkAuth], orders);
+app.get("/carorders", [checkAuth], carorders);
 
 // CHECKOUT
 app.post("/checkout", [checkAuth], checkout);
+app.post("/carcheckout", [checkAuth], carCheckout);
 
 // WISHLIST
 app.post("/add-to-wishlist", [checkAuth], addToWishlist);
@@ -120,6 +125,8 @@ app.get("/remove-from-wishlist", [checkAuth], removeFromWishlist);
 // ADMIN
 app.get("/dashboard", [isAdmin], dashboardData);
 app.get("/admin/orders", [isAdmin], getAllOrders);
+app.get("/admin/carorders", [isAdmin], getAllCarOrders);
+
 app.get("/admin/order-status", [isAdmin], changeStatusOfOrder);
 app.get("/admin/users", [isAdmin], getAllUsers);
 
